@@ -1,0 +1,11 @@
+{
+    "name": "campus-tech-workshop-portal",
+    "description": "Campus Tech Workshop & Hackathon Registration Portal",
+    "type": "project",
+    "require": {
+        "php": ">=7.4"
+    },
+    "scripts": {
+        "start": "php -S 0.0.0.0:$PORT"
+    }
+}
