@@ -38,9 +38,26 @@ Campus_Tech_Workshop_Portal/
 - **Database**: MySQL
 - **File Handling**: PHP file upload with validation
 
-## 📋 Setup Instructions
+## 🚀 Quick Deploy to Vercel
 
-### Local Development (XAMPP/WAMP)
+1. **Fork/Clone this repository**
+2. **Connect to Vercel**: Import your GitHub repository at [vercel.com](https://vercel.com)
+3. **Setup Database**: Use PlanetScale, Railway, or any MySQL cloud service
+4. **Set Environment Variables** in Vercel dashboard:
+   ```
+   DB_HOST=your_database_host
+   DB_USER=your_database_user
+   DB_PASS=your_database_password
+   DB_NAME=your_database_name
+   ```
+5. **Import Database**: Run the SQL from `database_schema.sql`
+6. **Deploy**: Your app will be live at `your-project.vercel.app`
+
+📖 **Detailed deployment guide**: See [DEPLOYMENT.md](DEPLOYMENT.md)
+
+## 📋 Local Development Setup
+
+### XAMPP/WAMP Setup
 
 1. **Download and Install XAMPP/WAMP**
    - Download from [XAMPP](https://www.apachefriends.org/) or [WAMP](http://www.wampserver.com/)

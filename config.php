@@ -1,9 +1,10 @@
 <?php
 // Database configuration
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "hackathon_portal";
+// Use environment variables for production, fallback to local values
+$host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: "localhost";
+$user = $_ENV['DB_USER'] ?? getenv('DB_USER') ?: "root";
+$pass = $_ENV['DB_PASS'] ?? getenv('DB_PASS') ?: "";
+$dbname = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?: "hackathon_portal";
 
 // Create connection
 $conn = new mysqli($host, $user, $pass, $dbname);
