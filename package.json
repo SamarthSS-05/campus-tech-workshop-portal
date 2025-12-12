@@ -4,8 +4,7 @@
   "description": "A complete web application for student registration to campus tech workshops and hackathon events",
   "main": "index.php",
   "scripts": {
-    "dev": "php -S localhost:8000",
-    "deploy": "vercel --prod"
+    "start": "php -S 0.0.0.0:$PORT"
   },
   "keywords": [
     "workshop",
@@ -16,8 +15,5 @@
     "bootstrap"
   ],
   "author": "Your Name",
-  "license": "MIT",
-  "engines": {
-    "node": ">=14.x"
-  }
+  "license": "MIT"
 }
