@@ -27,6 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "All required fields must be filled.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email format.";
+    } elseif (!preg_match('/^[0-9]{10,15}$/', preg_replace('/[\s\-\(\)]/', '', $phone))) {
+        $error = "Invalid phone number format.";
+    } elseif (strlen($name) > 100 || strlen($email) > 100) {
+        $error = "Name or email too long.";
     } else {
         // Handle file upload
         $file_path = "";
@@ -39,16 +43,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Validate file
             $allowed_ext = array('pdf', 'jpg', 'jpeg', 'png');
+            $allowed_mime = array('application/pdf', 'image/jpeg', 'image/jpg', 'image/png');
             $max_size = 5 * 1024 * 1024; // 5MB
+            $file_mime = mime_content_type($file_tmp);
             
             if (!in_array($file_ext, $allowed_ext)) {
                 $error = "Invalid file format. Only PDF, JPG, JPEG, PNG allowed.";
+            } elseif (!in_array($file_mime, $allowed_mime)) {
+                $error = "Invalid file type detected.";
             } elseif ($file_size > $max_size) {
                 $error = "File size too large. Maximum 5MB allowed.";
             } else {
-                // Generate unique filename
-                $unique_name = time() . "_" . $file_name;
+                // Generate secure unique filename
+                $unique_name = uniqid() . '_' . bin2hex(random_bytes(8)) . '.' . $file_ext;
                 $file_path = $upload_dir . $unique_name;
+                
+                // Create upload directory if it doesn't exist
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
                 
                 if (!move_uploaded_file($file_tmp, $file_path)) {
                     $error = "Failed to upload file.";
@@ -58,31 +71,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Insert into database if no errors
         if (empty($error)) {
-            $sql = "INSERT INTO registrations (name, email, phone, college, department, year, tracks, skill_level, file_path) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            // Check for duplicate email
+            $check_sql = "SELECT id FROM registrations WHERE email = ?";
+            $check_stmt = $conn->prepare($check_sql);
+            $check_stmt->bind_param("s", $email);
+            $check_stmt->execute();
+            $result = $check_stmt->get_result();
             
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssssss", $name, $email, $phone, $college, $department, $year, $tracks, $skill_level, $file_path);
-            
-            if ($stmt->execute()) {
-                $success = true;
-                $registration_data = array(
-                    'name' => $name,
-                    'email' => $email,
-                    'phone' => $phone,
-                    'college' => $college,
-                    'department' => $department,
-                    'year' => $year,
-                    'tracks' => $tracks,
-                    'skill_level' => $skill_level,
-                    'file_path' => $file_path,
-                    'id' => $conn->insert_id
-                );
+            if ($result->num_rows > 0) {
+                $error = "Email already registered. Please use a different email.";
             } else {
-                $error = "Database error: " . $conn->error;
+                $sql = "INSERT INTO registrations (name, email, phone, college, department, year, tracks, skill_level, file_path) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                
+                $stmt = $conn->prepare($sql);
+                if ($stmt) {
+                    $stmt->bind_param("sssssssss", $name, $email, $phone, $college, $department, $year, $tracks, $skill_level, $file_path);
+                    
+                    if ($stmt->execute()) {
+                        $success = true;
+                        $registration_data = array(
+                            'name' => $name,
+                            'email' => $email,
+                            'phone' => $phone,
+                            'college' => $college,
+                            'department' => $department,
+                            'year' => $year,
+                            'tracks' => $tracks,
+                            'skill_level' => $skill_level,
+                            'file_path' => $file_path,
+                            'id' => $conn->insert_id
+                        );
+                    } else {
+                        $error = "Registration failed. Please try again.";
+                        error_log("Database error: " . $stmt->error);
+                    }
+                    
+                    $stmt->close();
+                } else {
+                    $error = "Database preparation failed.";
+                }
             }
-            
-            $stmt->close();
+            $check_stmt->close();
         }
     }
 }

@@ -1,9 +1,21 @@
 <?php
 include 'config.php';
 
-// Fetch all registrations
-$sql = "SELECT * FROM registrations ORDER BY created_at DESC";
-$result = $conn->query($sql);
+// Initialize search parameter
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Fetch registrations with optional search
+if (!empty($search)) {
+    $search_param = "%" . $search . "%";
+    $sql = "SELECT * FROM registrations WHERE name LIKE ? OR email LIKE ? OR college LIKE ? OR tracks LIKE ? ORDER BY created_at DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssss", $search_param, $search_param, $search_param, $search_param);
+    $stmt->execute();
+    $result = $stmt->get_result();
+} else {
+    $sql = "SELECT * FROM registrations ORDER BY created_at DESC";
+    $result = $conn->query($sql);
+}
 ?>
 
 <!DOCTYPE html>
