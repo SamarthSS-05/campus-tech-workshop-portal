@@ -181,12 +181,12 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="name" class="form-label">Full Name *</label>
-                                        <input type="text" class="form-control" id="name" name="name" required>
+                                        <input type="text" class="form-control" id="name" name="name" maxlength="100" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="email" class="form-label">Email *</label>
-                                        <input type="email" class="form-control" id="email" name="email" required>
+                                        <input type="email" class="form-control" id="email" name="email" maxlength="100" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -194,12 +194,12 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="phone" class="form-label">Phone Number *</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                                        <input type="tel" class="form-control" id="phone" name="phone" maxlength="20" pattern="[0-9+\-\s\(\)]{10,20}" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="college" class="form-label">College/Institution *</label>
-                                        <input type="text" class="form-control" id="college" name="college" required>
+                                        <input type="text" class="form-control" id="college" name="college" maxlength="150" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -207,7 +207,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="department" class="form-label">Department *</label>
-                                        <input type="text" class="form-control" id="department" name="department" required>
+                                        <input type="text" class="form-control" id="department" name="department" maxlength="100" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                     <div class="col-md-6 mb-3">
